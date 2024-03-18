@@ -1,0 +1,16 @@
+.user-container{
+    padding: 25px;
+}
+
+.users-title{
+    padding: 20px 0px 20px 0px;
+}
+
+.add-user-button{
+   padding-bottom: 10px;
+}
+
+.users-table{
+    overflow-x: auto;
+    height: 340px;
+}

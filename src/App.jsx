@@ -1,35 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import Login from "./components/Login";
+import Home from "./components/Home";
+import NavBarWrapper from './components/NavBarWrapper';
+import Users from "./components/Users/Users";
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const [isLoggedIn, setLoggedIn] = useState(false);
+
+  // Verificar la sesión al cargar la aplicación
+  useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
+    const storedPassword = sessionStorage.getItem("password");
+
+    if (storedUsername && storedPassword) {
+      // Credenciales encontradas, establecer el estado de inicio de sesión
+      setLoggedIn(true);
+    }
+  }, []);
+
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    // Limpiar credenciales en sessionStorage al cerrar sesión
+    sessionStorage.removeItem("username");
+    sessionStorage.removeItem("password");
+    // Cambiar el estado de inicio de sesión
+    setLoggedIn(false);
+  };
 
   return (
-    <>
+    <Router>
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Routes>
+          <Route
+            path="/login"
+            element={
+              isLoggedIn ? (
+                <Navigate to="/home" />
+              ) : (
+                <Login onLogin={handleLogin} />
+              )
+            }
+          />
+          <Route
+            path="/home/*"
+            element={
+              isLoggedIn ? (
+                <NavBarWrapper onLogout={handleLogout}>
+                  <Home />
+                </NavBarWrapper>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/users/*"
+            element={
+              isLoggedIn ? (
+                <NavBarWrapper onLogout={handleLogout}>
+                  <Users />
+                </NavBarWrapper>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="/" element={<Navigate to={isLoggedIn ? "/home" : "/login"} />} />
+        </Routes>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    </Router>
+  );
+};
 
-export default App
+export default App;

@@ -1,0 +1,13 @@
+.last-transactions-title{
+    padding: 20px 0px 20px 0px;
+}
+
+.last-transactions-table{
+    overflow-x: auto;
+    height: 340px;
+}
+
+.table-header {
+    position: sticky;
+  top: 0;
+  }
