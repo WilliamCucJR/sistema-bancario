@@ -39,7 +39,7 @@ export default function Home() {
     right: 0,
   };
 
-  const handleOpenModal = (bankId, bankTitle) => {
+  const handleOpenBankModal = (bankId, bankTitle) => {
     setSelectedBankId(bankId);
     setSelectedBankTitle(bankTitle);
     setShow(true);
@@ -58,7 +58,7 @@ export default function Home() {
                       style={buttonStyle}
                       key={idx}
                       className="me-2 mb-2"
-                      onClick={() => handleOpenModal(card.id, card.title)}
+                      onClick={() => handleOpenBankModal(card.id, card.title)}
                     >
                       {typeof v === "string" && `below ${v.split("-")[0]}`}
                     </Button>

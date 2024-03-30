@@ -3,6 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
+import { FaUsers } from "react-icons/fa6";
+import { GrMoney } from "react-icons/gr";
+import { BsBank2 } from "react-icons/bs";
+import { IoHome } from "react-icons/io5";
+import { FaCogs } from "react-icons/fa";
+import { FaSignOutAlt } from "react-icons/fa";
+import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import logoSistema from "../../img/sistema-logo-horizontal.png";
 import "./NavBar.css";
 
@@ -21,12 +28,7 @@ export default function NavBar({ onLogout }) {
 
   return (
     <>
-      <Navbar
-        expand="lg"
-        bg="dark"
-        variant="dark"
-        className="navbar-sistema"
-      >
+      <Navbar expand="lg" bg="dark" variant="dark" className="navbar-sistema">
         <Navbar.Brand as={Link} to="/home">
           <img
             src={logoSistema}
@@ -38,16 +40,25 @@ export default function NavBar({ onLogout }) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/home">
-              Inicio
+            <IoHome /> Inicio
             </Nav.Link>
-            <NavDropdown title="Opciones" id="basic-nav-dropdown">
+            <NavDropdown  title={<><FaCogs /> Opciones</>} id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/users">
-                Usuarios
+                <FaUsers /> Usuarios
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/moneda">
+                <GrMoney /> Monedas
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/bank">
+                <BsBank2 /> Bancos
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/tipocuenta">
+                <MdOutlineAccountBalanceWallet /> Tipos Cuenta
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>
           <Nav>
-            <Nav.Link onClick={handleLogout}>Cerrar Sesión</Nav.Link>
+            <Nav.Link onClick={handleLogout}><FaSignOutAlt /> Cerrar Sesión</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

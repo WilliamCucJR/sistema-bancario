@@ -1,0 +1,31 @@
+.moneda-container {
+  padding: 25px;
+}
+
+.monedas-title {
+  padding: 20px 0px 20px 0px;
+}
+
+.add-moneda-button {
+  padding-bottom: 10px;
+}
+
+.monedas-table {
+  overflow-x: auto;
+  height: 340px;
+}
+
+.td-flex {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.buttonActions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 5px;
+}
