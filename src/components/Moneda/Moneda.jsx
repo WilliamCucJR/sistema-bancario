@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import CatalogueModal from "../CatalogueModal";
@@ -12,12 +12,16 @@ export default function Moneda() {
 
   const [monedas, setMonedas] = useState([]);
 
-  useEffect(() => {
+  const fetchMonedas = useCallback(() => {
     fetch(apiMoneda)
       .then((response) => response.json())
       .then((data) => setMonedas(data))
       .catch((error) => console.error("Error:", error));
   }, [apiMoneda]);
+
+  useEffect(() => {
+    fetchMonedas();
+  }, [fetchMonedas]);
 
   //const apiMoneda = `${apiUrlBase}/Moneda`;
 
@@ -40,6 +44,11 @@ export default function Moneda() {
     setShowModal(true);
   };
 
+  const handleSuccess = () => {
+    setShowModal(false);
+    fetchMonedas();
+  };
+
   return (
     <div className="moneda-container">
       <h2 className="monedas-title">Lista de Monedas</h2>
@@ -52,6 +61,7 @@ export default function Moneda() {
         isEditing={isEditing}
         record={selectedRecord}
         catalogType={catalogType}
+        onSuccess={handleSuccess}
       />
       <div className="monedas-table">
         <Table striped bordered hover>

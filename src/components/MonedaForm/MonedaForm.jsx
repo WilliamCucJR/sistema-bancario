@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
 import PropTypes from "prop-types";
 
-export default function MonedaForm({ record }) {
+export default function MonedaForm({ record, onFormValuesChange }) {
   const apiUrlBase = import.meta.env.VITE_API_URL;
   const apiMoneda = `${apiUrlBase}/Moneda/GetMoneda/${record}`;
   const [monedaById, setMonedaById] = useState([]);
@@ -15,6 +15,10 @@ export default function MonedaForm({ record }) {
         .then((data) => {
           setMonedaById(data);
           setFormValues({
+            tipoMoneda: data.TIPO_MONEDA,
+            tasaCambio: data.TASA_DE_CAMBIO,
+          });
+          onFormValuesChange({
             tipoMoneda: data.TIPO_MONEDA,
             tasaCambio: data.TASA_DE_CAMBIO,
           });
@@ -31,18 +35,22 @@ export default function MonedaForm({ record }) {
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     if (value === "" || /^[0-9.]+$/.test(value)) {
-      setFormValues({
+      const newFormValues = {
         ...formValues,
         [name]: value,
-      });
+      };
+      setFormValues(newFormValues);
+      onFormValuesChange(newFormValues);
     }
   };
 
   const handleTipoMonedaChange = (event) => {
-    setFormValues({
+    const newFormValues = {
       ...formValues,
       tipoMoneda: event.target.value,
-    });
+    };
+    setFormValues(newFormValues);
+    onFormValuesChange(newFormValues);
   };
   return (
     <>
@@ -74,4 +82,5 @@ export default function MonedaForm({ record }) {
 
 MonedaForm.propTypes = {
   record: PropTypes.number,
+  onFormValuesChange: PropTypes.func,
 };
