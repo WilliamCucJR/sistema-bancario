@@ -8,6 +8,7 @@ import { GrMoney } from "react-icons/gr";
 import { BsBank2 } from "react-icons/bs";
 import { IoHome } from "react-icons/io5";
 import { FaCogs } from "react-icons/fa";
+import { IoDocumentsOutline } from "react-icons/io5";
 import { FaSignOutAlt } from "react-icons/fa";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import logoSistema from "../../img/sistema-logo-horizontal.png";
@@ -53,7 +54,10 @@ export default function NavBar({ onLogout }) {
                 <BsBank2 /> Bancos
               </NavDropdown.Item>
               <NavDropdown.Item as={Link} to="/tipocuenta">
-                <MdOutlineAccountBalanceWallet /> Tipos Cuenta
+                <MdOutlineAccountBalanceWallet /> Tipos de Cuenta
+              </NavDropdown.Item>
+              <NavDropdown.Item as={Link} to="/tipodocumento">
+                <IoDocumentsOutline /> Tipos de Documentos
               </NavDropdown.Item>
             </NavDropdown>
           </Nav>

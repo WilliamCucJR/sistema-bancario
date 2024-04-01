@@ -23,6 +23,31 @@ export default function Moneda() {
     fetchMonedas();
   }, [fetchMonedas]);
 
+  const handleDelete = (id) => {
+    const confirmDelete = window.confirm('¿Estás seguro de que quieres eliminar este registro?');
+  
+    if (confirmDelete) {
+      fetch(`${apiUrlBase}/Moneda/DeleteMoneda/${id}`, {
+        method: 'DELETE',
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la API');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Deleted:', data);
+        // Recarga los datos después de eliminar un registro
+        fetchMonedas();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Maneja el error como prefieras
+      });
+    }
+  };
+
   //const apiMoneda = `${apiUrlBase}/Moneda`;
 
   const [showModal, setShowModal] = useState(false);
@@ -52,7 +77,7 @@ export default function Moneda() {
   return (
     <div className="moneda-container">
       <h2 className="monedas-title">Lista de Monedas</h2>
-      <Button variant="primary" onClick={() => handleOpenAddModal("moneda")}>
+      <Button variant="success" onClick={() => handleOpenAddModal("moneda")}>
         Agregar Moneda +
       </Button>
       <CatalogueModal
@@ -67,7 +92,7 @@ export default function Moneda() {
         <Table striped bordered hover>
           <thead className="table-header">
             <tr>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>#</th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>ID Moneda</th>
               <th style={{ backgroundColor: "#2b3036", color: "white" }}>
                 Tipo de Moneda
               </th>
@@ -96,7 +121,7 @@ export default function Moneda() {
                   </Button>
                   <Button
                     variant="danger"
-                    onClick={() => handleOpenEditModal("moneda", item)}
+                    onClick={() => handleDelete(item.ID)}
                     size="sm"
                     className="buttonActions"
                   >
