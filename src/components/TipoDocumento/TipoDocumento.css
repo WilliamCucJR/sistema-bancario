@@ -1,18 +1,18 @@
-.tipo-cuenta-container {
+.tipo-documento-container {
     padding: 25px;
   }
   
-  .tipo-cuentas-title {
+  .tipo-documentos-title {
     padding: 20px 0px 20px 0px;
     display: flex;
   align-items: center;
   }
   
-  .add-tipo-cuenta-button {
+  .add-tipo-documento-button {
     padding-bottom: 10px;
   }
   
-  .tipo-cuentas-table {
+  .tipo-documentos-table {
     overflow-x: auto;
     height: 340px;
   }

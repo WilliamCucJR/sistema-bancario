@@ -4,6 +4,7 @@ import Button from "react-bootstrap/Button";
 import CatalogueModal from "../CatalogueModal";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
+import { GrMoney } from "react-icons/gr";
 import "./Moneda.css";
 
 export default function Moneda() {
@@ -76,7 +77,10 @@ export default function Moneda() {
 
   return (
     <div className="moneda-container">
-      <h2 className="monedas-title">Lista de Monedas</h2>
+      <h1 className="monedas-title">
+        <GrMoney /> 
+        Monedas
+      </h1>
       <Button variant="success" onClick={() => handleOpenAddModal("moneda")}>
         Agregar Moneda +
       </Button>

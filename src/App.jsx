@@ -14,6 +14,7 @@ import Users from "./components/Users/Users";
 import Moneda from "./components/Moneda/Moneda";
 import Bank from "./components/Bank/Bank";
 import TipoCuenta from "./components/TipoCuenta/TipoCuenta";
+import TipoDocumento from "./components/TipoDocumento";
 
 const App = () => {
   const [isLoggedIn, setLoggedIn] = useState(false);
@@ -109,6 +110,18 @@ const App = () => {
               isLoggedIn ? (
                 <NavBarWrapper onLogout={handleLogout}>
                   <TipoCuenta />
+                </NavBarWrapper>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/tipodocumento/*"
+            element={
+              isLoggedIn ? (
+                <NavBarWrapper onLogout={handleLogout}>
+                  <TipoDocumento />
                 </NavBarWrapper>
               ) : (
                 <Navigate to="/login" />

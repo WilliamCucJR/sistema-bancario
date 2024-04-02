@@ -4,52 +4,52 @@ import Button from "react-bootstrap/Button";
 import CatalogueModal from "../CatalogueModal";
 import { FaRegEdit } from "react-icons/fa";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { BsBank2 } from "react-icons/bs";
-import "./Bank.css";
+import { IoDocumentsOutline } from "react-icons/io5";
+import "./TipoDocumento.css";
 
-export default function Bank() {
+export default function TipoDocumento() {
   const apiUrlBase = import.meta.env.VITE_API_URL;
-  const apiBank = `${apiUrlBase}/Banco/GetAllBancos`;
+  const apiTipoDocumento = `${apiUrlBase}/TipoDocumento/GetAllTipoDocumentos`;
 
-  const [banks, setBanks] = useState([]);
+  const [tipoDocumentos, setTipoDocumentos] = useState([]);
 
-  const fetchBanks = useCallback(() => {
-    fetch(apiBank)
+  const fetchTipoDocumentos = useCallback(() => {
+    fetch(apiTipoDocumento)
       .then((response) => response.json())
-      .then((data) => setBanks(data))
+      .then((data) => setTipoDocumentos(data))
       .catch((error) => console.error("Error:", error));
-  }, [apiBank]);
+  }, [apiTipoDocumento]);
 
   useEffect(() => {
-    fetchBanks();
-  }, [fetchBanks]);
+    fetchTipoDocumentos();
+  }, [fetchTipoDocumentos]);
 
   const handleDelete = (id) => {
-    const confirmDelete = window.confirm(
-      "¿Estás seguro de que quieres eliminar este registro?"
-    );
-
+    const confirmDelete = window.confirm('¿Estás seguro de que quieres eliminar este registro?');
+  
     if (confirmDelete) {
-      fetch(`${apiUrlBase}/Banco/DeleteBanco/${id}`, {
-        method: "DELETE",
+      fetch(`${apiUrlBase}/TipoDocumento/DeleteTipoDocumento/${id}`, {
+        method: 'DELETE',
       })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Error en la API");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          console.log("Deleted:", data);
-          // Recarga los datos después de eliminar un registro
-          fetchBanks();
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          // Maneja el error como prefieras
-        });
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error en la API');
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Deleted:', data);
+        // Recarga los datos después de eliminar un registro
+        fetchTipoDocumentos();
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Maneja el error como prefieras
+      });
     }
   };
+
+  //const apiMoneda = `${apiUrlBase}/Moneda`;
 
   const [showModal, setShowModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -72,17 +72,17 @@ export default function Bank() {
 
   const handleSuccess = () => {
     setShowModal(false);
-    fetchBanks();
+    fetchTipoDocumentos();
   };
 
   return (
-    <div className="bank-container">
-      <h1 className="banks-title">
-        <BsBank2 />
-        Bancos
+    <div className="tipo-documento-container">
+      <h1 className="tipo-documentos-title">
+        <IoDocumentsOutline /> 
+        Tipos de Documento
       </h1>
-      <Button variant="success" onClick={() => handleOpenAddModal("bank")}>
-        Agregar Banco +
+      <Button variant="success" onClick={() => handleOpenAddModal("tipoDocumento")}>
+        Agregar Moneda +
       </Button>
       <CatalogueModal
         show={showModal}
@@ -92,15 +92,21 @@ export default function Bank() {
         catalogType={catalogType}
         onSuccess={handleSuccess}
       />
-      <div className="banks-table">
+      <div className="tipo-documentos-table">
         <Table striped bordered hover>
           <thead className="table-header">
             <tr>
               <th style={{ backgroundColor: "#2b3036", color: "white" }}>
-                ID Banco
+                ID Tipo Documento
               </th>
               <th style={{ backgroundColor: "#2b3036", color: "white" }}>
-                Banco
+                Nombre Documento
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Descripcion
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Operación
               </th>
               <th style={{ backgroundColor: "#2b3036", color: "white" }}>
                 Acciones
@@ -108,14 +114,16 @@ export default function Bank() {
             </tr>
           </thead>
           <tbody>
-            {banks.map((item, index) => (
+            {tipoDocumentos.map((item, index) => (
               <tr key={index}>
-                <td>{item.ID_BANCO}</td>
-                <td>{item.NOMBRE_BANCO}</td>
+                <td>{item.ID}</td>
+                <td>{item.NOMBRE_DOCUMENTO}</td>
+                <td>{item.DESCRIPCION}</td>
+                <td>{item.OPERACION}</td>
                 <td className="td-flex">
                   <Button
                     variant="warning"
-                    onClick={() => handleOpenEditModal("bank", item)}
+                    onClick={() => handleOpenEditModal("tipoDocumento", item)}
                     size="sm"
                     className="buttonActions"
                   >
@@ -123,7 +131,7 @@ export default function Bank() {
                   </Button>
                   <Button
                     variant="danger"
-                    onClick={() => handleDelete(item.ID_BANCO)}
+                    onClick={() => handleDelete(item.ID)}
                     size="sm"
                     className="buttonActions"
                   >

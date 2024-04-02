@@ -43,7 +43,7 @@ export default function NavBar({ onLogout }) {
             <Nav.Link as={Link} to="/home">
             <IoHome /> Inicio
             </Nav.Link>
-            <NavDropdown  title={<><FaCogs /> Opciones</>} id="basic-nav-dropdown">
+            <NavDropdown  title={<><FaCogs /> Mantenimiento</>} id="basic-nav-dropdown">
               <NavDropdown.Item as={Link} to="/users">
                 <FaUsers /> Usuarios
               </NavDropdown.Item>

@@ -4,6 +4,8 @@
   
   .banks-title {
     padding: 20px 0px 20px 0px;
+    display: flex;
+    align-items: center;
   }
   
   .add-bank-button {

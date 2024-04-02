@@ -7,6 +7,7 @@ import UsersForm from "../UsersForm/UsersForm";
 import BankForm from "../BankForm/BankForm";
 import MonedaForm from "../MonedaForm/MonedaForm";
 import TipoCuentaForm from "../TipoCuentaForm/TipoCuentaForm";
+import TipoDocumentoForm from "../TipoDocumentoForm/TipoDocumentoForm";
 import "./CatalogueModal.css";
 
 export default function CatalogueModal({
@@ -25,6 +26,13 @@ export default function CatalogueModal({
   const [alertVisible, setAlertVisible] = useState(false);
   const [error, setError] = useState(null);
   const apiUrlBase = import.meta.env.VITE_API_URL;
+
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = ("0" + (date.getMonth() + 1)).slice(-2); // Los meses en JavaScript comienzan desde 0
+  const day = ("0" + date.getDate()).slice(-2);
+
+  const fechaActual = `${year}/${month}/${day}`;
 
   const handleFormValuesChange = (values) => {
     setFormValues(values);
@@ -58,7 +66,7 @@ export default function CatalogueModal({
       );
       modalTitle = isEditing == true ? "Editar Moneda" : "Agregar Moneda";
       break;
-    case "tipocuenta":
+    case "tipoCuenta":
       form = (
         <TipoCuentaForm
           record={isEditing ? record.ID : null}
@@ -67,6 +75,16 @@ export default function CatalogueModal({
       );
       modalTitle =
         isEditing == true ? "Editar Tipo Cuenta" : "Agregar Tipo Cuenta";
+      break;
+    case "tipoDocumento":
+      form = (
+        <TipoDocumentoForm
+          record={isEditing ? record.ID : null}
+          onFormValuesChange={handleFormValuesChange}
+        />
+      );
+      modalTitle =
+        isEditing == true ? "Editar Tipo Documento" : "Agregar Tipo Documento";
       break;
     default:
       form = null;
@@ -97,7 +115,7 @@ export default function CatalogueModal({
           body: JSON.stringify({
             ID_BANCO: record?.ID_BANCO,
             NOMBRE_BANCO: formValues.banco,
-            FECHA_DE_CREACION: "2024/03/30",
+            FECHA_DE_CREACION: fechaActual,
             ID_USUARIO: 1,
           }),
         })
@@ -157,7 +175,81 @@ export default function CatalogueModal({
           });
 
         break;
-      case "tipocuenta":
+      case "tipoCuenta":
+        console.log(record?.ID);
+        url = record?.ID
+          ? `${apiUrlBase}/TipoCuenta/UpdateTipoCuenta/${record.ID}`
+          : `${apiUrlBase}/TipoCuenta/CreateTipoCuenta`;
+
+        console.log(url);
+
+        method = record?.ID ? "PUT" : "POST";
+
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID: record?.ID,
+            TIPO_DE_CUENTA: formValues.tipoCuenta,
+            FECHA_DE_CREACION: fechaActual,
+          }),
+        })
+          .then((data) => {
+            console.log("Success:", data);
+            setAlertVisible(true); // Muestra la alerta
+
+            // Oculta la alerta después de 5 segundos, cierra el modal y recarga los datos
+            setTimeout(() => {
+              setAlertVisible(false);
+              handleClose();
+              onSuccess();
+            }, 3000);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            setError(error.message);
+          });
+
+        break;
+      case "tipoDocumento":
+        console.log(record?.ID);
+        url = record?.ID
+          ? `${apiUrlBase}/TipoDocumento/UpdateTipoDocumento/${record.ID}`
+          : `${apiUrlBase}/TipoDocumento/CreateTipoDocumento`;
+
+        console.log(url);
+
+        method = record?.ID ? "PUT" : "POST";
+
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ID: record?.ID,
+            NOMBRE_DOCUMENTO: formValues.nombreDocumento,
+            DESCRIPCION: formValues.descripcion,
+            OPERACION: formValues.operacion,
+          }),
+        })
+          .then((data) => {
+            console.log("Success:", data);
+            setAlertVisible(true); // Muestra la alerta
+
+            // Oculta la alerta después de 5 segundos, cierra el modal y recarga los datos
+            setTimeout(() => {
+              setAlertVisible(false);
+              handleClose();
+              onSuccess();
+            }, 3000);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            setError(error.message);
+          });
         break;
       default:
         form = null;
