@@ -51,7 +51,7 @@ export default function CatalogueModal({
     case "user":
       form = (
         <UsersForm
-          record={isEditing ? record.ID : null}
+          record={isEditing ? record.USERID : null}
           onFormValuesChange={handleFormValuesChange}
         />
       );
@@ -95,6 +95,7 @@ export default function CatalogueModal({
 
     let method = "";
     let url = "";
+    let fechaNacimientoFormateada = "";
 
     switch (catalogType) {
       case "bank":
@@ -136,6 +137,65 @@ export default function CatalogueModal({
           });
         break;
       case "user":
+        console.log(record?.USERID);
+        url = record?.USERID
+          ? `${apiUrlBase}/UserLogin/UpdateUserLogin/${record.USERID}`
+          : `${apiUrlBase}/UserLogin/CreateUserLogin`;
+
+        console.log(url);
+
+        method = record?.USERID ? "PUT" : "POST";
+
+        fechaNacimientoFormateada = formValues.fechaNacimiento.replace(/-/g, '/');
+
+        fetch(url, {
+          method: method,
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            USERID: record?.USERID,
+            NICKNAME: formValues.usuario,
+            PASSWORD: formValues.contrasenia,
+            PRIMER_NOMBRE: formValues.primerNombre,
+            SEGUNDO_NOMBRE: formValues.segundoNombre,
+            PRIMER_APELLIDO: formValues.primerApellido,
+            SEGUNDO_APELLIDO: formValues.segundoApellido,
+            DIRECCION: formValues.direccion,
+            TELEFONO: formValues.telefono,
+            EMAIL: formValues.email,
+            FECHANACIMIENTO: fechaNacimientoFormateada,
+            FECHAREGISTRO: fechaActual,
+            SEXO: formValues.sexo,
+            DPI: formValues.dpi,
+            NIT: formValues.nit,
+            CELULAR: formValues.celular,
+            ZONA: formValues.zona,
+            ID_DEPARTAMENTO: formValues.departamento,
+            ID_MUNICIPIO: formValues.municipio,
+            NIVEL_ACADEMICO: formValues.nivelAcademico,
+            DEPARTAMENTO_SISTEMA: formValues.departamentoSistema,
+            PUESTO: formValues.puesto,
+            FECHA_INGRESO: formValues.fechaIngreso,
+            ESTATUS_USUARIO: formValues.estatusUsuario,
+          }),
+        })
+          .then((data) => {
+            console.log("Success:", data);
+            setAlertVisible(true); // Muestra la alerta
+
+            // Oculta la alerta después de 5 segundos, cierra el modal y recarga los datos
+            setTimeout(() => {
+              setAlertVisible(false);
+              handleClose();
+              onSuccess();
+            }, 3000);
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            setError(error.message);
+          });
+
         break;
       case "moneda":
         console.log(record?.ID);
