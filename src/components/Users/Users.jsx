@@ -3,6 +3,7 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import CatalogueModal from "../CatalogueModal";
 import { FaRegEdit } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa6";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { GrMoney } from "react-icons/gr";
 import "./Users.css";
@@ -80,8 +81,8 @@ export default function Users() {
   return (
     <div className="user-container">
       <h1 className="users-title">
-        <GrMoney />
-        Monedas
+        <FaUsers />
+        Usuarios
       </h1>
       <Button variant="success" onClick={() => handleOpenAddModal("user")}>
         Agregar Usuario +
