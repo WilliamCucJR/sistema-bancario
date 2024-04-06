@@ -5,7 +5,6 @@ import CatalogueModal from "../CatalogueModal";
 import { FaRegEdit } from "react-icons/fa";
 import { FaUsers } from "react-icons/fa6";
 import { RiDeleteBin5Line } from "react-icons/ri";
-import { GrMoney } from "react-icons/gr";
 import "./Users.css";
 
 export default function Users() {

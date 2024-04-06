@@ -21,10 +21,11 @@ const App = () => {
 
   // Verificar la sesión al cargar la aplicación
   useEffect(() => {
-    const storedUsername = sessionStorage.getItem("username");
-    const storedPassword = sessionStorage.getItem("password");
+    //const storedUsername = sessionStorage.getItem("username");
+    //const storedPassword = sessionStorage.getItem("password");
+    const storedTokenSession = sessionStorage.getItem("tokenSession");
 
-    if (storedUsername && storedPassword) {
+    if (storedTokenSession) {
       // Credenciales encontradas, establecer el estado de inicio de sesión
       setLoggedIn(true);
     }
@@ -36,8 +37,7 @@ const App = () => {
 
   const handleLogout = () => {
     // Limpiar credenciales en sessionStorage al cerrar sesión
-    sessionStorage.removeItem("username");
-    sessionStorage.removeItem("password");
+    sessionStorage.removeItem("tokenSession");
     // Cambiar el estado de inicio de sesión
     setLoggedIn(false);
   };

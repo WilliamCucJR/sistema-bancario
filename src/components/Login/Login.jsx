@@ -11,8 +11,9 @@ export default function Login({ onLogin }) {
   const [validated, setValidated] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const apiUrlBase = import.meta.env.VITE_API_URL;
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
@@ -20,19 +21,39 @@ export default function Login({ onLogin }) {
     }
 
     setValidated(true);
-  };
 
-  const handleLogin = () => {
-    if (username && password) {
-      // Guardar en sessionStorage
-      sessionStorage.setItem("username", username);
-      sessionStorage.setItem("password", password);
-      // Llamar a la función de inicio de sesión
-      onLogin();
+    event.preventDefault();
+
+    const response = await fetch(`${apiUrlBase}/UserLogin/GetUserLoginAuth?username=${username}&password=${password}`);
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data === 1) {
+        // Guardar en sessionStorage
+        const randomString = generateRandomString(50);
+        //sessionStorage.setItem("username", username);
+        //sessionStorage.setItem("password", password);
+        sessionStorage.setItem("tokenSession", randomString);
+        // Llamar a la función de inicio de sesión
+        onLogin();
+      } else {
+        alert("Credenciales inválidas. Por favor, inténtelo de nuevo.");
+      }
     } else {
-      alert("Por favor, complete ambos campos.");
+      alert("Ha ocurrido un error al intentar iniciar sesión. Por favor, inténtelo de nuevo.");
     }
   };
+
+  function generateRandomString(length) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+{}|[]\\;\',./<>?:';
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   return (
     <div className="body-background">
       <div className="container container-login-form">
@@ -66,7 +87,7 @@ export default function Login({ onLogin }) {
               </Form.Control.Feedback>
             </Form.Group>
           </Row>
-          <Button type="submit" className="login-button" onClick={handleLogin}>Ingresar</Button>
+          <Button type="submit" className="login-button">Ingresar</Button>
         </Form>
       </div>
     </div>
@@ -76,3 +97,4 @@ export default function Login({ onLogin }) {
 Login.propTypes = {
   onLogin: PropTypes.func.isRequired,
 };
+
