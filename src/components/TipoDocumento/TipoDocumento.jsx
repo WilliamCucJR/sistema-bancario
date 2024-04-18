@@ -82,7 +82,7 @@ export default function TipoDocumento() {
         Tipos de Documento
       </h1>
       <Button variant="success" onClick={() => handleOpenAddModal("tipoDocumento")}>
-        Agregar Moneda +
+        Agregar Tipo de Documento +
       </Button>
       <CatalogueModal
         show={showModal}
