@@ -1,6 +1,50 @@
+import { useContext, useState } from "react";
+import PropTypes from "prop-types";
 import Table from "react-bootstrap/Table";
+import Button from "react-bootstrap/Button";
+import { FaRegEdit } from "react-icons/fa";
+import { RiDeleteBin5Line } from "react-icons/ri";
+import { CuentaBancariaContext } from "../BankModalCuenta/BankModalCuenta";
+import "./CuentaBancariaTable.css";
 
-export default function CuentaBancariaTable() {
+export default function CuentaBancariaTable({ setSelectedId }) {
+  // eslint-disable-next-line no-unused-vars
+  const { cuentasDelete, fetchCuentasDelete } = useContext(
+    CuentaBancariaContext
+  );
+  const apiUrlBase = import.meta.env.VITE_API_URL;
+  const apiDeleteCuenta = `${apiUrlBase}/CuentaBancaria/DeleteCuentaBancaria/`;
+
+  const { cuentas } = useContext(CuentaBancariaContext);
+  const [selectedCuenta, setSelectedCuenta] = useState(null);
+
+  const handleEditClick = (cuenta) => {
+    setSelectedCuenta(cuenta);
+  };
+
+  const handleDeleteClick = (idCuenta) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta cuenta?')) {
+      fetch(apiDeleteCuenta + idCuenta, {
+        method: "DELETE",
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.text();
+        })
+        .then((data) => {
+          console.log("Success:", data);
+          fetchCuentasDelete(); // Actualizamos las cuentas después de eliminar una
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
+  };
+
+  console.log(selectedCuenta);
+
   return (
     <>
       <div style={{ maxHeight: "550px", overflowY: "auto" }}>
@@ -8,135 +52,57 @@ export default function CuentaBancariaTable() {
           <thead>
             <tr>
               <th style={{ backgroundColor: "#2b3036", color: "white" }}>#</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>No. Cuenta</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Tipo Cuenta</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Nombre</th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                No. Cuenta
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Nombre
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Saldo
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>00000001</td>
-              <td>Monetaria</td>
-              <td>Mark</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>00000002</td>
-              <td>Ahorro</td>
-              <td>Jane</td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>00000003</td>
-              <td>Monetaria</td>
-              <td>John</td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>00000004</td>
-              <td>Ahorro</td>
-              <td>Alice</td>
-            </tr>
-            <tr>
-              <td>5</td>
-              <td>00000005</td>
-              <td>Monetaria</td>
-              <td>Bob</td>
-            </tr>
-            <tr>
-              <td>6</td>
-              <td>00000006</td>
-              <td>Ahorro</td>
-              <td>Eve</td>
-            </tr>
-            <tr>
-              <td>7</td>
-              <td>00000007</td>
-              <td>Monetaria</td>
-              <td>Michael</td>
-            </tr>
-            <tr>
-              <td>8</td>
-              <td>00000008</td>
-              <td>Ahorro</td>
-              <td>Emily</td>
-            </tr>
-            <tr>
-              <td>9</td>
-              <td>00000009</td>
-              <td>Monetaria</td>
-              <td>David</td>
-            </tr>
-            <tr>
-              <td>10</td>
-              <td>00000010</td>
-              <td>Ahorro</td>
-              <td>Sarah</td>
-            </tr>
-            <tr>
-              <td>11</td>
-              <td>00000011</td>
-              <td>Monetaria</td>
-              <td>Thomas</td>
-            </tr>
-            <tr>
-              <td>12</td>
-              <td>00000012</td>
-              <td>Ahorro</td>
-              <td>Olivia</td>
-            </tr>
-            <tr>
-              <td>13</td>
-              <td>00000013</td>
-              <td>Monetaria</td>
-              <td>Liam</td>
-            </tr>
-            <tr>
-              <td>14</td>
-              <td>00000014</td>
-              <td>Ahorro</td>
-              <td>Sophia</td>
-            </tr>
-            <tr>
-              <td>15</td>
-              <td>00000015</td>
-              <td>Monetaria</td>
-              <td>Ethan</td>
-            </tr>
-            <tr>
-              <td>16</td>
-              <td>00000016</td>
-              <td>Ahorro</td>
-              <td>Isabella</td>
-            </tr>
-            <tr>
-              <td>17</td>
-              <td>00000017</td>
-              <td>Monetaria</td>
-              <td>James</td>
-            </tr>
-            <tr>
-              <td>18</td>
-              <td>00000018</td>
-              <td>Ahorro</td>
-              <td>Charlotte</td>
-            </tr>
-            <tr>
-              <td>19</td>
-              <td>00000019</td>
-              <td>Monetaria</td>
-              <td>William</td>
-            </tr>
-            <tr>
-              <td>20</td>
-              <td>00000020</td>
-              <td>Ahorro</td>
-              <td>Amelia</td>
-            </tr>
+            {cuentas.map((cuenta, index) => (
+              <tr key={index}>
+                <td>{cuenta.ID_CUENTA}</td>
+                <td>{cuenta.NO_DE_CUENTA}</td>
+                <td>{cuenta.NOMBRE_CUENTAHABIENTE}</td>
+                <td>{cuenta.SALDO}</td>
+                <td className="td-cuenta-flex">
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="buttonActionsCuenta"
+                    onClick={() => {
+                      handleEditClick(cuenta.ID_CUENTA);
+                      setSelectedId(cuenta.ID_CUENTA); // Aquí está la corrección
+                    }}
+                  >
+                    <FaRegEdit size={12} />
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    className="buttonActionsCuenta"
+                    onClick={() => handleDeleteClick(cuenta.ID_CUENTA)}
+                  >
+                    <RiDeleteBin5Line size={12} />
+                  </Button>
+                </td>
+              </tr>
+            ))}
           </tbody>
         </Table>
       </div>
     </>
   );
 }
+
+CuentaBancariaTable.propTypes = {
+  setSelectedId: PropTypes.func,
+};

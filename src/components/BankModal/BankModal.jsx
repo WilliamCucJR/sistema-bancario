@@ -35,7 +35,7 @@ export default function BankModal({ show, handleClose, bankId, bankTitle }) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <BankModalNavigation />
+        <BankModalNavigation bankId={bankId}/>
       </Modal.Body>
     </Modal>
   );

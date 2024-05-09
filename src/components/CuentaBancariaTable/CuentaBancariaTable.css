@@ -1,0 +1,15 @@
+.td-cuenta-flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+.buttonActionsCuenta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 5px;
+  }
+  
