@@ -7,11 +7,20 @@ export default function UsersForm({ record, onFormValuesChange }) {
   const apiUrlBase = import.meta.env.VITE_API_URL;
   const apiUser = `${apiUrlBase}/UserLogin/GetUserLogin/${record}`;
   const apiDepartamento = `${apiUrlBase}/DepartamentoControler/GetAllDepartamentos`;
+  const apiMunicipioByDepartamento = `${apiUrlBase}/Municipio/GetMunicipiosByDepartamento/`;
+  const apiMunicipio = `${apiUrlBase}/Municipio/GetAllMunicipios`;
 
   const [userById, setUserById] = useState([]);
   const [departamentos, setDepartamentos] = useState([]);
+  const [municipios, setMunicipios] = useState([]);
 
   console.log(userById);
+
+  useEffect(() => {
+    if (formValues.departamento > 1) {
+      fetchMunicipios(formValues.departamento);
+    }
+  }, []);
 
   useEffect(() => {
     fetch(apiDepartamento)
@@ -22,7 +31,41 @@ export default function UsersForm({ record, onFormValuesChange }) {
       .catch((error) => console.error("Error:", error));
   }, []);
 
+  useEffect(() => {
+    // Asegúrate de que apiMunicipio esté definido y sea una URL válida
+    if (!apiMunicipio) {
+      console.error("apiMunicipio no está definido");
+      return;
+    }
+  
+    fetch(apiMunicipio)
+      .then((response) => {
+        // Verifica si la respuesta es ok antes de convertirla a JSON
+        if (!response.ok) {
+          throw new Error(`API error, status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Asegúrate de que setMunicipios esté definido
+        if (typeof setMunicipios === "function") {
+          setMunicipios(data);
+        } else {
+          console.error("setMunicipios no está definido");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
   console.log(departamentos);
+
+
+  const fetchMunicipios = (departamentoId) => {
+    fetch(apiMunicipioByDepartamento + departamentoId)
+      .then((response) => response.json())
+      .then((data) => setMunicipios(data))
+      .catch((error) => console.error("Error:", error));
+  };
 
   useEffect(() => {
     if (record !== null) {
@@ -95,6 +138,10 @@ export default function UsersForm({ record, onFormValuesChange }) {
   const [formValues, setFormValues] = useState({
     telefono: "",
     dpi: "",
+    departamento: '',
+    municipio: '',
+    sexo: '',
+    nivelAcademico: '',
   });
 
   const handleInputChange = (event) => {
@@ -231,6 +278,14 @@ export default function UsersForm({ record, onFormValuesChange }) {
     };
     setFormValues(newFormValues);
     onFormValuesChange(newFormValues);
+
+    const departamentoId = event.target.value;
+    formValues.departamento = departamentoId;
+
+    fetch(apiMunicipioByDepartamento + departamentoId)
+      .then((response) => response.json())
+      .then((data) => setMunicipios(data))
+      .catch((error) => console.error("Error:", error));
   };
 
   const handleMunicipioChange = (event) => {
@@ -486,12 +541,9 @@ export default function UsersForm({ record, onFormValuesChange }) {
               value={formValues.departamento}
               onChange={handleDepartamentoChange}
             >
-              <option>Departamento</option>
+              <option>Seleccionar</option>
               {departamentos.map((departamento) => (
-                <option
-                  key={departamento.ID}
-                  value={departamento.ID}
-                >
+                <option key={departamento.ID} value={departamento.ID}>
                   {departamento.NOMBRE_DEL_DEPARTAMENTO}
                 </option>
               ))}
@@ -501,13 +553,18 @@ export default function UsersForm({ record, onFormValuesChange }) {
         <Col>
           <Form.Group className="mb-3" controlId="formBasicPassword">
             <Form.Label>Municipio</Form.Label>
-            <Form.Control
-              type="number"
+            <Form.Select
               name="municipio"
-              placeholder="Municipio"
               value={formValues.municipio}
               onChange={handleMunicipioChange}
-            />
+            >
+              <option>Seleccionar</option>
+              {municipios.map((municipio) => (
+                <option key={municipio.ID} value={municipio.ID}>
+                  {municipio.Nombre}
+                </option>
+              ))}
+            </Form.Select>
           </Form.Group>
         </Col>
       </Row>

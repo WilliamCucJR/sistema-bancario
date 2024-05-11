@@ -14,13 +14,21 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
   const apiInsertCuenta = `${apiUrlBase}/CuentaBancaria/CreateCuentaBancaria`;
   const apiUpdateCuenta = `${apiUrlBase}/CuentaBancaria/UpdateCuentaBancaria/${idCuenta}`;
   const apiGetCuenta = `${apiUrlBase}/CuentaBancaria/GetCuentaBancaria/${idCuenta}`;
+  const apiMunicipio = `${apiUrlBase}/Municipio/GetAllMunicipios`;
+  const apiDepartamento = `${apiUrlBase}/DepartamentoControler/GetAllDepartamentos`;
+  const apiMoneda = `${apiUrlBase}/Moneda/GetAllMonedas`;
+  const apiTipoCuenta = `${apiUrlBase}/TipoCuenta/GetAllTipoCuentas`;
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const [departamentos, setDepartamentos] = useState([]);
+  const [municipios, setMunicipios] = useState([]);
+  const [monedas, setMonedas] = useState([]);
+  const [tipoCuentas, setTipoCuentas] = useState([]);
 
-  console.log("Bank ID -> ", bankIdStr);
+  console.log('TIPO CUENTA -> ', tipoCuentas);
 
-  console.log("API URL -> ", apiGetCuenta);
+  //console.log("API URL -> ", apiGetCuenta);
 
   const [noCuenta, setNoCuenta] = useState("");
   const [tipoCuenta, setTipoCuenta] = useState("");
@@ -37,6 +45,63 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
   const [saldo, setSaldo] = useState("");
 
   useEffect(() => {
+    fetch(apiMoneda)
+      .then((response) => response.json())
+      .then((data) => {
+        setMonedas(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(apiTipoCuenta)
+      .then((response) => response.json())
+      .then((data) => {
+        setTipoCuentas(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
+  useEffect(() => {
+    fetch(apiDepartamento)
+      .then((response) => response.json())
+      .then((data) => {
+        setDepartamentos(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
+  useEffect(() => {
+    // Asegúrate de que apiMunicipio esté definido y sea una URL válida
+    if (!apiMunicipio) {
+      console.error("apiMunicipio no está definido");
+      return;
+    }
+
+    fetch(apiMunicipio)
+      .then((response) => {
+        // Verifica si la respuesta es ok antes de convertirla a JSON
+        if (!response.ok) {
+          throw new Error(`API error, status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Asegúrate de que setMunicipios esté definido
+        if (typeof setMunicipios === "function") {
+          setMunicipios(data);
+        } else {
+          console.error("setMunicipios no está definido");
+        }
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
+
+  useEffect(() => {
+    if (idCuenta === 0) {
+      return;
+    }
+
     fetch(apiGetCuenta)
       .then((response) => response.json())
       .then((data) => {
@@ -57,7 +122,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
         // Haz lo mismo para los demás campos
       })
       .catch((error) => console.error("Error:", error));
-  }, [apiGetCuenta]);
+  }, [apiGetCuenta, idCuenta]);
 
   console.log("Cuenta -> ", cuenta);
 
@@ -159,13 +224,19 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
           <Col>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Tipo de Cuenta</Form.Label>
-              <Form.Control
+              <Form.Select
+                as="select"
                 size="sm"
-                type="text"
-                placeholder="Tipo de Cuenta"
                 value={tipoCuenta}
                 onChange={(e) => setTipoCuenta(e.target.value)}
-              />
+              >
+                <option>Seleccionar</option>
+                {tipoCuentas.map((mun, index) => (
+                  <option key={index} value={mun.ID}>
+                    {mun.TIPO_DE_CUENTA}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Col>
         </Row>
@@ -263,39 +334,57 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
           <Col>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Departamento</Form.Label>
-              <Form.Control
+              <Form.Select
+                as="select"
                 size="sm"
-                type="number"
-                placeholder="Departamento"
                 value={departamento}
                 onChange={(e) => setDepartamento(e.target.value)}
-              />
+              >
+                <option>Seleccionar</option>
+                {departamentos.map((dep, index) => (
+                  <option key={index} value={dep.ID}>
+                    {dep.NOMBRE_DEL_DEPARTAMENTO}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Col>
           <Col>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Municipio</Form.Label>
-              <Form.Control
+              <Form.Select
+                as="select"
                 size="sm"
-                type="number"
-                placeholder="Municipio"
                 value={municipio}
                 onChange={(e) => setMunicipio(e.target.value)}
-              />
+              >
+                <option>Seleccionar</option>
+                {municipios.map((mun, index) => (
+                  <option key={index} value={mun.ID}>
+                    {mun.Nombre}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Col>
         </Row>
         <Row>
-          <Col>
-            <Form.Group className="mb-3" controlId="formBasicEmail">
+        <Col>
+            <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Moneda</Form.Label>
-              <Form.Control
+              <Form.Select
+                as="select"
                 size="sm"
-                type="text"
-                placeholder="Moneda"
                 value={moneda}
                 onChange={(e) => setMoneda(e.target.value)}
-              />
+              >
+                <option>Seleccionar</option>
+                {monedas.map((dep, index) => (
+                  <option key={index} value={dep.ID}>
+                    {dep.TIPO_MONEDA}
+                  </option>
+                ))}
+              </Form.Select>
             </Form.Group>
           </Col>
           <Col>

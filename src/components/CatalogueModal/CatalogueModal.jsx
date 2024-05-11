@@ -38,6 +38,7 @@ export default function CatalogueModal({
     setFormValues(values);
   };
 
+
   switch (catalogType) {
     case "bank":
       form = (
@@ -90,13 +91,15 @@ export default function CatalogueModal({
       form = null;
   }
 
-  const handleSubmit = () => {
+  const handleSubmitForm = () => {
+    console.log("Entro a handleSubmit");
     console.log(formValues);
 
     let method = "";
     let url = "";
     let fechaNacimientoFormateada = "";
 
+    console.log("Catalogo: ", catalogType);
     switch (catalogType) {
       case "bank":
         console.log(record?.ID_BANCO);
@@ -137,7 +140,10 @@ export default function CatalogueModal({
           });
         break;
       case "user":
+        
+      console.log('Entro a user');
         console.log(record?.USERID);
+
         url = record?.USERID
           ? `${apiUrlBase}/UserLogin/UpdateUserLogin/${record.USERID}`
           : `${apiUrlBase}/UserLogin/CreateUserLogin`;
@@ -179,6 +185,7 @@ export default function CatalogueModal({
             FECHA_INGRESO: formValues.fechaIngreso,
             ESTATUS_USUARIO: formValues.estatusUsuario,
           }),
+          
         })
           .then((data) => {
             console.log("Success:", data);
@@ -336,7 +343,7 @@ export default function CatalogueModal({
           <Button variant="danger" onClick={handleClose}>
             Cerrar
           </Button>
-          <Button variant="success" onClick={handleSubmit}>
+          <Button variant="success" onClick={handleSubmitForm}>
             Guardar
           </Button>
         </Modal.Footer>
