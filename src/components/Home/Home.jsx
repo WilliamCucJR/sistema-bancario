@@ -15,7 +15,6 @@ export default function Home() {
     { id: 1, title: "Banco Industrial", content: "This is Card 1", image: logoBI },
     { id: 2, title: "BAM", content: "This is Card 2", image: logoBam },
     { id: 3, title: "Banrural", content: "This is Card 3", image: logoBanrural},
-    // Agrega más tarjetas aquí
   ];
   const values = [true];
   const [show, setShow] = useState(false);

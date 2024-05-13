@@ -3,6 +3,8 @@ import PropTypes from "prop-types";
 import Nav from "react-bootstrap/Nav";
 import "./BankModalNavigation.css";
 import BankModalCuenta from "../BankModalCuenta";
+import BankModalDebito from "../BankModalDebito";
+import BankModalCredito from "../BankModalCredito";
 
 export default function BankModalNavigation({ bankId }) {
   const [selectedTab, setSelectedTab] = useState("link-cuenta");
@@ -16,9 +18,9 @@ export default function BankModalNavigation({ bankId }) {
       case "link-conciliacion":
         return <p>Contenido de la opción 2</p>;
       case "link-debitos-transferencias":
-        return <p>Contenido de la opción 3</p>;
+        return <BankModalDebito bankId={bankId} />;
       case "link-creditos":
-        return <p>Contenido de la opción 4</p>;
+        return <BankModalCredito bankId={bankId} />;
       default:
         return null;
     }

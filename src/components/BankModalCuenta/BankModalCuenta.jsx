@@ -13,7 +13,7 @@ export default function BankModalCuenta( bankId ) {
   const [cuentas, setCuentas] = useState([]);
 
   const apiUrlBase = import.meta.env.VITE_API_URL;
-  const apiGetCuentas = `${apiUrlBase}/CuentaBancaria/GetAllCuentasBancarias`;
+  const apiGetCuentas = `${apiUrlBase}/CuentaBancaria/GetCuentaBancariaByBancoID/${bankIdStr}`;
 
   const fetchCuentas = () => {
     fetch(apiGetCuentas)
