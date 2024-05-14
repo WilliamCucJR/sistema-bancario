@@ -11,7 +11,7 @@ export default function BankModalDebito({ bankId }) {
     const [debitos, setDebitos] = useState([]);
   
     const apiUrlBase = import.meta.env.VITE_API_URL;
-    const apiGetDebitos = `${apiUrlBase}/Movimientos/GetAllMovimientos`;
+    const apiGetDebitos = `${apiUrlBase}/Movimientos/GetNotasDebitoPorBanco/${bankId}`;
   
     const fetchDebitos = () => {
       fetch(apiGetDebitos)

@@ -5,6 +5,7 @@ import "./BankModalNavigation.css";
 import BankModalCuenta from "../BankModalCuenta";
 import BankModalDebito from "../BankModalDebito";
 import BankModalCredito from "../BankModalCredito";
+import BankModalConciliacion from "../BankModalConciliacion";
 
 export default function BankModalNavigation({ bankId }) {
   const [selectedTab, setSelectedTab] = useState("link-cuenta");
@@ -16,7 +17,7 @@ export default function BankModalNavigation({ bankId }) {
       case "link-reportes":
         return <p>Contenido de la opción 1</p>;
       case "link-conciliacion":
-        return <p>Contenido de la opción 2</p>;
+        return <BankModalConciliacion bankId={bankId} />
       case "link-debitos-transferencias":
         return <BankModalDebito bankId={bankId} />;
       case "link-creditos":

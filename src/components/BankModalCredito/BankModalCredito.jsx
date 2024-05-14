@@ -10,7 +10,7 @@ export default function BankModalCredito({ bankId }) {
     const [creditos, setCreditos] = useState([]);
 
     const apiUrlBase = import.meta.env.VITE_API_URL;
-    const apiGetCreditos = `${apiUrlBase}/Movimientos/GetAllMovimientos`;
+    const apiGetCreditos = `${apiUrlBase}/Movimientos/GetNotasCreditoPorBanco/${bankId}`;
 
     const fetchCreditos = () => {
         fetch(apiGetCreditos)
