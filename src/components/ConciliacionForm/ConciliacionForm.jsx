@@ -64,7 +64,12 @@ export default function ConciliacionForm({ bankId }) {
         console.log("apiGetConciliacion: ", apiGetConciliacion);
 
         fetch(apiGetConciliacion)
-          .then((response) => response.json())
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+          })
           .then((data) => {
             // Asegúrate de que la fecha existe antes de intentar formatearla
             if (Array.isArray(data)) {
@@ -99,56 +104,66 @@ export default function ConciliacionForm({ bankId }) {
   console.log("Conciliacion: ", conciliacion);
   console.log("Data: ", data);
 
-// Primero, mapea el array data
-let resultConciliacion = data.map((d) => {
-  // Busca el elemento en conciliacion
-  const conciliacionItem = conciliacion.find(
-    (c) => String(c.NO_DOCUMENTO) === String(d.NO_DOCUMENTO) && String(c.FECHA) === String(d.FECHA) && String(c.MONTO) === String(d.MONTO)
-  );
+  // Primero, mapea el array data
+  let resultConciliacion = data.map((d) => {
+    // Busca el elemento en conciliacion
+    const conciliacionItem = conciliacion.find(
+      (c) =>
+        String(c.NO_DOCUMENTO) === String(d.NO_DOCUMENTO) &&
+        String(c.FECHA) === String(d.FECHA) &&
+        String(c.MONTO) === String(d.MONTO)
+    );
 
-  // Si el elemento se encuentra en ambos arrays, crea un objeto con todos los campos
-  if (conciliacionItem) {
+    // Si el elemento se encuentra en ambos arrays, crea un objeto con todos los campos
+    if (conciliacionItem) {
+      return {
+        descripcion_data: d.DESCRIPCION,
+        fecha_data: d.FECHA,
+        monto_data: d.MONTO,
+        no_documento_data: d.NO_DOCUMENTO,
+        descripcion_conciliacion: conciliacionItem.DESCRIPCION,
+        fecha_conciliacion: conciliacionItem.FECHA,
+        monto_conciliacion: conciliacionItem.MONTO,
+        no_documento_conciliacion: conciliacionItem.NO_DOCUMENTO,
+        color: "#eaf6f0",
+      };
+    }
+
+    // Si el elemento solo se encuentra en data, crea un objeto con solo los campos data llenos
     return {
       descripcion_data: d.DESCRIPCION,
       fecha_data: d.FECHA,
       monto_data: d.MONTO,
       no_documento_data: d.NO_DOCUMENTO,
-      descripcion_conciliacion: conciliacionItem.DESCRIPCION,
-      fecha_conciliacion: conciliacionItem.FECHA,
-      monto_conciliacion: conciliacionItem.MONTO,
-      no_documento_conciliacion: conciliacionItem.NO_DOCUMENTO,
-      color: '#eaf6f0',
+      color: "#fae9e9",
     };
-  }
+  });
 
-  // Si el elemento solo se encuentra en data, crea un objeto con solo los campos data llenos
-  return {
-    descripcion_data: d.DESCRIPCION,
-    fecha_data: d.FECHA,
-    monto_data: d.MONTO,
-    no_documento_data: d.NO_DOCUMENTO,
-    color: '#fae9e9',
-  };
-});
+  // Luego, mapea el array conciliacion para encontrar los elementos que solo están en conciliacion
+  conciliacion.forEach((c) => {
+    if (
+      !data.find(
+        (d) =>
+          String(d.NO_DOCUMENTO) === String(c.NO_DOCUMENTO) &&
+          String(d.FECHA) === String(c.FECHA) &&
+          String(d.MONTO) === String(c.MONTO)
+      )
+    ) {
+      resultConciliacion.push({
+        descripcion_conciliacion: c.DESCRIPCION,
+        fecha_conciliacion: c.FECHA,
+        monto_conciliacion: c.MONTO,
+        no_documento_conciliacion: c.NO_DOCUMENTO,
+        color: "#fae9e9",
+      });
+    }
+  });
 
-// Luego, mapea el array conciliacion para encontrar los elementos que solo están en conciliacion
-conciliacion.forEach((c) => {
-  if (!data.find((d) => String(d.NO_DOCUMENTO) === String(c.NO_DOCUMENTO) && String(d.FECHA) === String(c.FECHA) && String(d.MONTO) === String(c.MONTO))) {
-    resultConciliacion.push({
-      descripcion_conciliacion: c.DESCRIPCION,
-      fecha_conciliacion: c.FECHA,
-      monto_conciliacion: c.MONTO,
-      no_documento_conciliacion: c.NO_DOCUMENTO,
-      color: '#fae9e9',
-    });
-  }
-});
-
-  resultConciliacion = resultConciliacion.map(item => ({
+  resultConciliacion = resultConciliacion.map((item) => ({
     ...item,
     cuenta: cuentaData,
     mes: mesData,
-    anio: anioData
+    anio: anioData,
   }));
 
   console.log("Result Conciliacion: ", resultConciliacion);
@@ -179,11 +194,21 @@ conciliacion.forEach((c) => {
 
             <th style={{ backgroundColor: "white" }}></th>
 
-            <th style={{ border: "1px solid grey", textAlign: "center" }} colSpan={4}>Archivo</th>
+            <th
+              style={{ border: "1px solid grey", textAlign: "center" }}
+              colSpan={4}
+            >
+              Archivo
+            </th>
 
             <th style={{ backgroundColor: "white" }}></th>
 
-            <th style={{ border: "1px solid grey", textAlign: "center" }} colSpan={4}>Banco</th>
+            <th
+              style={{ border: "1px solid grey", textAlign: "center" }}
+              colSpan={4}
+            >
+              Banco
+            </th>
           </tr>
           <tr>
             <th style={{ border: "1px solid grey" }}>Cuenta</th>
@@ -208,25 +233,64 @@ conciliacion.forEach((c) => {
         <tbody>
           {resultConciliacion.map((row, index) => (
             <tr key={index}>
-              <td style={{ border: "1px solid grey" }}>
-                {row["cuenta"]}
-              </td>
+              <td style={{ border: "1px solid grey" }}>{row["cuenta"]}</td>
               <td style={{ border: "1px solid grey" }}>{row["mes"]}</td>
               <td style={{ border: "1px solid grey" }}>{row["anio"]}</td>
               <td style={{ backgroundColor: "white", border: "none" }}></td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["descripcion_data"]}</td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["fecha_data"]}</td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["monto_data"]}</td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                {row["descripcion_data"]}
+              </td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                {row["fecha_data"]}
+              </td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                Q
+                {isNaN(row["monto_data"])
+                  ? "0.00"
+                  : parseFloat(row["monto_data"]).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+              </td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
                 {row["no_documento_data"]}
               </td>
 
               <td style={{ backgroundColor: "white", border: "none" }}></td>
 
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["descripcion_conciliacion"]}</td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["fecha_conciliacion"]}</td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["monto_conciliacion"]}</td>
-              <td style={{ border: "1px solid grey", backgroundColor: row.color }}>{row["no_documento_conciliacion"]}</td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                {row["descripcion_conciliacion"]}
+              </td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                {row["fecha_conciliacion"]}
+              </td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                {isNaN(row["monto_conciliacion"])
+                  ? "0.00"
+                  : parseFloat(row["monto_conciliacion"]).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+              </td>
+              <td
+                style={{ border: "1px solid grey", backgroundColor: row.color }}
+              >
+                {row["no_documento_conciliacion"]}
+              </td>
             </tr>
           ))}
         </tbody>

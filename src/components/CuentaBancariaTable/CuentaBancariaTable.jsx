@@ -72,7 +72,13 @@ export default function CuentaBancariaTable({ setSelectedId }) {
                 <td>{cuenta.ID_CUENTA}</td>
                 <td>{cuenta.NO_DE_CUENTA}</td>
                 <td>{cuenta.NOMBRE_CUENTAHABIENTE}</td>
-                <td>{cuenta.SALDO}</td>
+                <td style={{ padding: "1px" }}>
+                  Q
+                  {parseFloat(cuenta.SALDO).toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
                 <td className="td-cuenta-flex">
                   <Button
                     variant="warning"

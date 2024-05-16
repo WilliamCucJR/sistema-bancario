@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext, useEffect } from "react";
 import { creditosContext } from "../BankModalCredito/BankModalCredito";
 import PropTypes from "prop-types";
 import Button from "react-bootstrap/Button";
@@ -8,75 +8,78 @@ import Row from "react-bootstrap/Row";
 import Alert from "react-bootstrap/Alert";
 
 export default function CreditoForm({ bankId }) {
+  const { fetchCreditos } = useContext(creditosContext);
 
-    const { fetchCreditos } = useContext(creditosContext);
+  const fechaActual = new Date().toISOString().split("T")[0];
+  const [idCuenta, setIdCuenta] = useState("");
+  const [idDocumento, setIdDocumento] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [fecha, setFecha] = useState(fechaActual);
+  const [noDocumento, setNoDocumento] = useState("");
+  const [monto, setMonto] = useState("");
+  const [documentoContable, setDocumentoContable] = useState("");
+  const [tipoDocumentos, setTipoDocumentos] = useState([]);
+  const [cuentasCredito, setCuentasCredito] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(
+    "Error al guardar la información"
+  );
+  const [successMessage, setSuccessMessage] = useState(
+    "Registro guardado correctamente"
+  );
 
-    const fechaActual = new Date().toISOString().split('T')[0];
-    const [idCuenta, setIdCuenta] = useState("");
-    const [idDocumento, setIdDocumento] = useState("");
-    const [descripcion, setDescripcion] = useState("");
-    const [fecha, setFecha] = useState(fechaActual);
-    const [noDocumento, setNoDocumento] = useState("");
-    const [monto, setMonto] = useState("");
-    const [documentoContable, setDocumentoContable] = useState("");
-    const [tipoDocumentos, setTipoDocumentos] = useState([]);
-    const [cuentasCredito, setCuentasCredito] = useState([]);
+  console.log("Bank ID -> ", bankId);
 
+  const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+  const [showErrorAlert, setShowErrorAlert] = useState(false);
+  const apiUrlBase = import.meta.env.VITE_API_URL;
+  const apiInsertMovimiento = `${apiUrlBase}/Movimientos/CreateMovimientoStoreProcedure`;
+  const apiGetTipoDocumentos = `${apiUrlBase}/TipoDocumento/GetAllTipoDocumentosCredito`;
+  const apiGetCuentasCredito = `${apiUrlBase}/CuentaBancaria/GetCuentaBancariaByBancoID/${bankId}`;
 
-    console.log('Bank ID -> ', bankId);
+  useEffect(() => {
+    fetch(apiGetTipoDocumentos)
+      .then((response) => response.json())
+      .then((data) => {
+        setTipoDocumentos(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
 
-    const [showSuccessAlert, setShowSuccessAlert] = useState(false);
-    const [showErrorAlert, setShowErrorAlert] = useState(false);
-    const apiUrlBase = import.meta.env.VITE_API_URL;
-    const apiInsertMovimiento = `${apiUrlBase}/Movimientos/CreateMovimiento`;
-    const apiGetTipoDocumentos = `${apiUrlBase}/TipoDocumento/GetAllTipoDocumentos`;
-    const apiGetCuentasCredito = `${apiUrlBase}/CuentaBancaria/GetCuentaBancariaByBancoID/${bankId}`;
+  useEffect(() => {
+    fetch(apiGetCuentasCredito)
+      .then((response) => response.json())
+      .then((data) => {
+        setCuentasCredito(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
 
-    useEffect(() => {
-        fetch(apiGetTipoDocumentos)
-          .then((response) => response.json())
-          .then((data) => {
-            setTipoDocumentos(data);
-          })
-          .catch((error) => console.error("Error:", error));
-      }, []);
+    const movimiento = {
+      ID_MOVIMIENTO: 0,
+      ID_CUENTA: idCuenta,
+      ID_DOCUMENTO: idDocumento,
+      DESCRIPCION: descripcion,
+      FECHA: fecha,
+      NO_DOCUMENTO: noDocumento,
+      TIPO_DOCUMENTO_ID: 1,
+      MONTO: monto,
+      DOCUMENTO_CONTABLE: documentoContable,
+    };
 
-    
-        useEffect(() => {
-            fetch(apiGetCuentasCredito)
-                .then((response) => response.json())
-                .then((data) => {
-                    setCuentasCredito(data);
-                })
-                .catch((error) => console.error("Error:", error));
-        }, []);
-
-    const handleSubmit = (event) => {
-        event.preventDefault();
-      
-        const movimiento = {
-          ID_MOVIMIENTO: 0,
-          ID_CUENTA: idCuenta,
-          ID_DOCUMENTO: idDocumento,
-          DESCRIPCION: descripcion,
-          FECHA: fecha,
-          NO_DOCUMENTO: noDocumento,
-          TIPO_DOCUMENTO_ID: 1,
-          MONTO: monto,
-          DOCUMENTO_CONTABLE: documentoContable,
-        };
-      
-        fetch(apiInsertMovimiento, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(movimiento),
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data) {
+    fetch(apiInsertMovimiento, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(movimiento),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data) {
+          if (data.message === "Saldo actualizado con éxito") {
             console.log("Success:");
             fetchCreditos();
             setIdCuenta("");
@@ -86,28 +89,40 @@ export default function CreditoForm({ bankId }) {
             setNoDocumento("");
             setMonto("");
             setDocumentoContable("");
+
+            setSuccessMessage(data.message);
             setShowSuccessAlert(true);
             setTimeout(() => {
               setShowSuccessAlert(false);
             }, 5000);
-          } else {
-            console.log("No content returned");
-          }
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-          setShowErrorAlert(true);
-          setTimeout(() => {
-            setShowErrorAlert(false);
-          }, 5000);
-        });
-      };
 
-    return (
-        <>
+          } else {
+
+            setErrorMessage(data.message);
+            setShowErrorAlert(true);
+            setTimeout(() => {
+              setShowErrorAlert(false);
+            }, 5000);
+
+          }
+        } else {
+          console.log("No content returned");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        setShowErrorAlert(true);
+        setTimeout(() => {
+          setShowErrorAlert(false);
+        }, 5000);
+      });
+  };
+
+  return (
+    <>
       <Form onSubmit={handleSubmit}>
         <Row>
-        <Col>
+          <Col>
             <Form.Group className="mb-3" controlId="formBasicPassword">
               <Form.Label>Acreditar a cuenta</Form.Label>
               <Form.Select
@@ -213,12 +228,12 @@ export default function CreditoForm({ bankId }) {
         </Row>
         {showSuccessAlert && (
           <Alert variant="success" id="alert-success">
-            Registro guardado correctamente
+            {successMessage}
           </Alert>
         )}
         {showErrorAlert && (
           <Alert variant="danger" id="alert-error">
-            Error al guardar la información
+            {errorMessage}
           </Alert>
         )}
         <div className="text-end">
@@ -228,9 +243,9 @@ export default function CreditoForm({ bankId }) {
         </div>
       </Form>
     </>
-    )
+  );
 }
 
 CreditoForm.propTypes = {
-    bankId: PropTypes.number,
-  };
+  bankId: PropTypes.number,
+};

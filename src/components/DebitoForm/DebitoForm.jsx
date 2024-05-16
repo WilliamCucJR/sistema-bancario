@@ -22,14 +22,20 @@ export default function DebitoForm({ bankId }) {
   const [tipoDocumentos, setTipoDocumentos] = useState([]);
   const [cuentasDebito, setCuentasDebito] = useState([]);
   const [cuentasCredito, setCuentasCredito] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(
+    "Error al guardar la información"
+  );
+  const [successMessage, setSuccessMessage] = useState(
+    "Registro guardado correctamente"
+  );
 
   console.log("Bank ID -> ", bankId);
 
   const [showSuccessAlert, setShowSuccessAlert] = useState(false);
   const [showErrorAlert, setShowErrorAlert] = useState(false);
   const apiUrlBase = import.meta.env.VITE_API_URL;
-  const apiInsertMovimiento = `${apiUrlBase}/Movimientos/CreateMovimiento`;
-  const apiGetTipoDocumentos = `${apiUrlBase}/TipoDocumento/GetAllTipoDocumentos`;
+  const apiInsertMovimiento = `${apiUrlBase}/Movimientos/CreateMovimientoStoreProcedure`;
+  const apiGetTipoDocumentos = `${apiUrlBase}/TipoDocumento/GetAllTipoDocumentosDebito`;
   const apiGetCuentasDebito = `${apiUrlBase}/CuentaBancaria/GetCuentaBancariaByBancoID/${bankId}`;
   const apiGetCuentasCredito = `${apiUrlBase}/CuentaBancaria/GetAllCuentasBancarias`;
 
@@ -53,15 +59,17 @@ export default function DebitoForm({ bankId }) {
 
   useEffect(() => {
     fetch(apiGetCuentasCredito)
-        .then((response) => response.json())
-        .then((data) => {
-            setCuentasCredito(data);
-        })
-        .catch((error) => console.error("Error:", error));
-}, []);
+      .then((response) => response.json())
+      .then((data) => {
+        setCuentasCredito(data);
+      })
+      .catch((error) => console.error("Error:", error));
+  }, []);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    let movimientoInverso = {};
 
     const movimiento = {
       ID_MOVIMIENTO: 0,
@@ -70,10 +78,9 @@ export default function DebitoForm({ bankId }) {
       DESCRIPCION: descripcion,
       FECHA: fecha,
       NO_DOCUMENTO: noDocumento,
-      TIPO_DOCUMENTO_ID: 1,
+      TIPO_DOCUMENTO_ID: idDocumento,
       MONTO: monto,
       DOCUMENTO_CONTABLE: documentoContable,
-      ID_CUENTA_CREDITO: idCuentaCredito,
     };
 
     fetch(apiInsertMovimiento, {
@@ -86,20 +93,97 @@ export default function DebitoForm({ bankId }) {
       .then((response) => response.json())
       .then((data) => {
         if (data) {
-          console.log("Success:");
-          fetchDebitos();
-          setIdCuenta("");
-          setIdDocumento("");
-          setDescripcion("");
-          setFecha(fechaActual);
-          setNoDocumento("");
-          setMonto("");
-          setDocumentoContable("");
-          setIdCuentaCredito("");
-          setShowSuccessAlert(true);
-          setTimeout(() => {
-            setShowSuccessAlert(false);
-          }, 5000);
+          if (data.message === "Saldo actualizado con éxito") {
+            console.log("Success:");
+            console.log(data.message);
+            fetchDebitos();
+            setIdCuenta("");
+            setIdDocumento("");
+            setDescripcion("");
+            setFecha(fechaActual);
+            setNoDocumento("");
+            setMonto("");
+            setDocumentoContable("");
+            setIdCuentaCredito("");
+
+            setSuccessMessage(data.message);
+            setShowSuccessAlert(true);
+            setTimeout(() => {
+              setShowSuccessAlert(false);
+            }, 5000);
+
+            fetch(apiInsertMovimiento, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(movimientoInverso),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log("Success:", data);
+              })
+              .catch((error) => {
+                console.error("Error:", error);
+              });
+
+              if (idCuentaCredito > 0) {
+                const apiGetDocumentoById = `${apiUrlBase}/TipoDocumento/GetTipoDocumento/${idDocumento}`;
+            
+                let nombreDocumento;
+                let idDocumentoContrario;
+            
+                fetch(apiGetDocumentoById)
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Data Documento Nombre -> ", data);
+                    nombreDocumento = data.NOMBRE_DOCUMENTO;
+                    nombreDocumento = nombreDocumento.replace("Debito", "Credito");
+            
+                    const apiGetDocumentoByNombre = `${apiUrlBase}/TipoDocumento/GetTipoDocumentoByNombre/${nombreDocumento}`;
+            
+                    return fetch(apiGetDocumentoByNombre);
+                  })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Data Documento ID -> ", data);
+                    idDocumentoContrario = data.ID;
+            
+                    movimientoInverso = {
+                      ID_MOVIMIENTO: 0,
+                      ID_CUENTA: idCuentaCredito,
+                      ID_DOCUMENTO: idDocumentoContrario,
+                      DESCRIPCION: descripcion,
+                      FECHA: fecha,
+                      NO_DOCUMENTO: noDocumento,
+                      TIPO_DOCUMENTO_ID: idDocumentoContrario,
+                      MONTO: monto,
+                      DOCUMENTO_CONTABLE: documentoContable,
+                    };
+            
+                    return fetch(apiInsertMovimiento, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json",
+                      },
+                      body: JSON.stringify(movimientoInverso),
+                    });
+                  })
+                  .then((response) => response.json())
+                  .then((data) => {
+                    console.log("Success:", data);
+                  })
+                  .catch((error) => {
+                    console.error("Error:", error);
+                  });
+              }
+          } else {
+            setErrorMessage(data.message);
+            setShowErrorAlert(true);
+            setTimeout(() => {
+              setShowErrorAlert(false);
+            }, 5000);
+          }
         } else {
           console.log("No content returned");
         }
@@ -156,7 +240,7 @@ export default function DebitoForm({ bankId }) {
         </Row>
         <Row>
           <Col>
-          <Form.Group className="mb-3" controlId="formBasicEmail">
+            <Form.Group className="mb-3" controlId="formBasicEmail">
               <Form.Label>Documento</Form.Label>
               <Form.Select
                 as="select"
@@ -243,12 +327,12 @@ export default function DebitoForm({ bankId }) {
         </Row>
         {showSuccessAlert && (
           <Alert variant="success" id="alert-success">
-            Registro guardado correctamente
+            {successMessage}
           </Alert>
         )}
         {showErrorAlert && (
           <Alert variant="danger" id="alert-error">
-            Error al guardar la información
+            {errorMessage}
           </Alert>
         )}
         <div className="text-end">

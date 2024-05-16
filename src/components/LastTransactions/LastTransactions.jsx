@@ -1,97 +1,29 @@
+import { useState, useEffect, useCallback } from "react";
 import Table from "react-bootstrap/Table";
+import logoBI from "../../img/bi-logo-v4.png";
+import logoBam from "../../img/bam-logo-v4.png";
+import logoBanrural from "../../img/banrural-logo-v4.png";
 import "./LastTransactions.css";
 
 export default function LastTransactions() {
-  const registros = [
-    {
-      id: 1,
-      banco: "Banco A",
-      estado: "Aprobado",
-      fecha: "2024-02-25",
-      referencia: "REF001",
-      monto: 1000,
-    },
-    {
-      id: 2,
-      banco: "Banco B",
-      estado: "Rechazado",
-      fecha: "2024-02-26",
-      referencia: "REF002",
-      monto: 1500,
-    },
-    {
-      id: 3,
-      banco: "Banco C",
-      estado: "Pendiente",
-      fecha: "2024-02-27",
-      referencia: "REF003",
-      monto: 1200,
-    },
-    {
-      id: 4,
-      banco: "Banco D",
-      estado: "Aprobado",
-      fecha: "2024-02-28",
-      referencia: "REF004",
-      monto: 800,
-    },
-    {
-      id: 5,
-      banco: "Banco E",
-      estado: "Rechazado",
-      fecha: "2024-02-29",
-      referencia: "REF005",
-      monto: 2000,
-    },
-    {
-      id: 6,
-      banco: "Banco F",
-      estado: "Pendiente",
-      fecha: "2024-03-01",
-      referencia: "REF006",
-      monto: 1800,
-    },
-    {
-      id: 7,
-      banco: "Banco G",
-      estado: "Aprobado",
-      fecha: "2024-03-02",
-      referencia: "REF007",
-      monto: 1300,
-    },
-    {
-      id: 8,
-      banco: "Banco H",
-      estado: "Rechazado",
-      fecha: "2024-03-03",
-      referencia: "REF008",
-      monto: 900,
-    },
-    {
-      id: 9,
-      banco: "Banco I",
-      estado: "Pendiente",
-      fecha: "2024-03-04",
-      referencia: "REF009",
-      monto: 1100,
-    },
-    {
-      id: 10,
-      banco: "Banco J",
-      estado: "Aprobado",
-      fecha: "2024-03-05",
-      referencia: "REF010",
-      monto: 1600,
-    },
-    {
-      id: 50,
-      banco: "Banco Z",
-      estado: "Pendiente",
-      fecha: "2024-03-25",
-      referencia: "REF050",
-      monto: 2200,
-    },
-  ];
+  const apiUrlBase = import.meta.env.VITE_API_URL;
+  const apiMovimientosHome = `${apiUrlBase}/Conciliacion/GetMovimientosHome`;
+
+  const [movimientosHome, setMovimientosHome] = useState([]);
+
+  const fetchMovimientosHome = useCallback(() => {
+    fetch(apiMovimientosHome)
+      .then((response) => response.json())
+      .then((data) => setMovimientosHome(data))
+      .catch((error) => console.error("Error:", error));
+  }, [apiMovimientosHome]);
+
+  useEffect(() => {
+    fetchMovimientosHome();
+  }, [fetchMovimientosHome]);
+
+  console.log("movimientosHome: ", movimientosHome);
+
   return (
     <div>
       <h2 className="last-transactions-title">
@@ -102,24 +34,69 @@ export default function LastTransactions() {
           <thead className="table-header">
             <tr>
               <th style={{ backgroundColor: "#2b3036", color: "white" }}>#</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Banco</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Estado</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Fecha</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Referencia</th>
-              <th style={{ backgroundColor: "#2b3036", color: "white" }}>Monto</th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Banco
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Descripcion
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Fecha
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                No. Documento
+              </th>
+              <th style={{ backgroundColor: "#2b3036", color: "white" }}>
+                Monto
+              </th>
             </tr>
           </thead>
           <tbody>
-            {registros.map((registro) => (
-              <tr key={registro.id}>
-                <td>{registro.id}</td>
-                <td>{registro.banco}</td>
-                <td>{registro.estado}</td>
-                <td>{registro.fecha}</td>
-                <td>{registro.referencia}</td>
-                <td>{registro.monto}</td>
-              </tr>
-            ))}
+            {movimientosHome.map((registro) => {
+              let imgBanco;
+
+              if (registro.NOMBRE_BANCO === "Banco Industrial") {
+                imgBanco = logoBI;
+              } else if (registro.NOMBRE_BANCO === "BAM") {
+                imgBanco = logoBam;
+              } else if (registro.NOMBRE_BANCO === "Banrural") {
+                imgBanco = logoBanrural;
+              }
+
+              return (
+                <tr key={registro.ID_MOVIMIENTO}>
+                  <td style={{ padding: "1px" }}>{registro.ID_MOVIMIENTO}</td>
+                  <td
+                    style={{ padding: "1px", width: "160px", height: "40px" }}
+                  >
+                    <img
+                      src={imgBanco}
+                      alt={registro.NOMBRE_BANCO}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  </td>
+                  <td style={{ padding: "1px" }}>{registro.DESCRIPCION}</td>
+                  <td style={{ padding: "1px" }}>
+                    {new Date(registro.FECHA).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
+                  </td>
+                  <td style={{ padding: "1px" }}>{registro.NO_DOCUMENTO}</td>
+                  <td style={{ padding: "1px" }}>Q 
+                    {parseFloat(registro.MONTO).toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </Table>
       </div>
