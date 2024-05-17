@@ -28,3 +28,4 @@ dist-ssr
 *.sw?
 .cache/
 .env
+.firebase/hosting.ZGlzdA.cache

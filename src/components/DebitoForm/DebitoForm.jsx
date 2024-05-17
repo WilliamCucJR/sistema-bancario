@@ -10,12 +10,11 @@ import Alert from "react-bootstrap/Alert";
 export default function DebitoForm({ bankId }) {
   const { fetchDebitos } = useContext(debitosContext);
 
-  const fechaActual = new Date().toISOString().split("T")[0];
   const [idCuenta, setIdCuenta] = useState("");
   const [idCuentaCredito, setIdCuentaCredito] = useState("");
   const [idDocumento, setIdDocumento] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [fecha, setFecha] = useState(fechaActual);
+  const [fecha, setFecha] = useState("");
   const [noDocumento, setNoDocumento] = useState("");
   const [monto, setMonto] = useState("");
   const [documentoContable, setDocumentoContable] = useState("");
@@ -100,7 +99,7 @@ export default function DebitoForm({ bankId }) {
             setIdCuenta("");
             setIdDocumento("");
             setDescripcion("");
-            setFecha(fechaActual);
+            setFecha("");
             setNoDocumento("");
             setMonto("");
             setDocumentoContable("");
@@ -282,7 +281,6 @@ export default function DebitoForm({ bankId }) {
                 placeholder="Fecha"
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
-                readOnly
               />
             </Form.Group>
           </Col>

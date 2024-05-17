@@ -10,11 +10,10 @@ import Alert from "react-bootstrap/Alert";
 export default function CreditoForm({ bankId }) {
   const { fetchCreditos } = useContext(creditosContext);
 
-  const fechaActual = new Date().toISOString().split("T")[0];
   const [idCuenta, setIdCuenta] = useState("");
   const [idDocumento, setIdDocumento] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [fecha, setFecha] = useState(fechaActual);
+  const [fecha, setFecha] = useState("");
   const [noDocumento, setNoDocumento] = useState("");
   const [monto, setMonto] = useState("");
   const [documentoContable, setDocumentoContable] = useState("");
@@ -56,7 +55,7 @@ export default function CreditoForm({ bankId }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+    
     const movimiento = {
       ID_MOVIMIENTO: 0,
       ID_CUENTA: idCuenta,
@@ -85,7 +84,7 @@ export default function CreditoForm({ bankId }) {
             setIdCuenta("");
             setIdDocumento("");
             setDescripcion("");
-            setFecha(fechaActual);
+            setFecha("");
             setNoDocumento("");
             setMonto("");
             setDocumentoContable("");
@@ -183,7 +182,6 @@ export default function CreditoForm({ bankId }) {
                 placeholder="Fecha"
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
-                readOnly
               />
             </Form.Group>
           </Col>

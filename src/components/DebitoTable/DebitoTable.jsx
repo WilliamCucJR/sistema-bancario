@@ -15,7 +15,7 @@ export default function DebitoTable({ bankId }) {
   );
 
   const apiUrlBase = import.meta.env.VITE_API_URL;
-  const apiDeleteMovimiento = `${apiUrlBase}/Movimientos/DeleteMovimientoDocumento/`;
+  const apiDeleteMovimiento = `${apiUrlBase}/Movimientos/DeleteMovimientoDocumentoProcedure/`;
   const { debitos } = useContext(debitosContext);
 
   const handleDeleteClick = (noDocumento) => {
