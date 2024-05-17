@@ -19,12 +19,19 @@ export default function BankModalDebito({ bankId }) {
         .then((data) => setDebitos(data))
         .catch((error) => console.error("Error:", error));
     };
+
+    const fetchDebitosDelete = () => {
+      fetch(apiGetDebitos)
+        .then((response) => response.json())
+        .then((data) => setDebitos(data))
+        .catch((error) => console.error("Error:", error));
+    };
   
     useEffect(fetchDebitos, []);
 
     console.log('Bank ID -> ', bankId);
     return (
-        <debitosContext.Provider value={{ debitos, setDebitos, fetchDebitos }}>
+        <debitosContext.Provider value={{ debitos, setDebitos, fetchDebitos, fetchDebitosDelete }}>
           <Row>
             <Col md={6} className="p-4">
               <DebitoForm bankId={bankId} />

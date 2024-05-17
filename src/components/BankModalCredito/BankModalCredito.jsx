@@ -19,10 +19,17 @@ export default function BankModalCredito({ bankId }) {
             .catch((error) => console.error("Error:", error));
     }
 
+    const fetchCreditosDelete = () => {
+      fetch(apiGetCreditos)
+        .then((response) => response.json())
+        .then((data) => setCreditos(data))
+        .catch((error) => console.error("Error:", error));
+    };
+
     useEffect(fetchCreditos, []);
 
     return (
-        <creditosContext.Provider value={{ creditos, setCreditos, fetchCreditos }}>
+        <creditosContext.Provider value={{ creditos, setCreditos, fetchCreditos, fetchCreditosDelete }}>
           <Row>
             <Col md={6} className="p-4">
               <CreditoForm bankId={bankId} />
