@@ -208,6 +208,7 @@ export default function DebitoForm({ bankId }) {
                 size="sm"
                 value={idCuenta}
                 onChange={(e) => setIdCuenta(e.target.value)}
+                required
               >
                 <option>Seleccionar</option>
                 {cuentasDebito.map((mun, index) => (
@@ -246,6 +247,7 @@ export default function DebitoForm({ bankId }) {
                 size="sm"
                 value={idDocumento}
                 onChange={(e) => setIdDocumento(e.target.value)}
+                required
               >
                 <option>Seleccionar</option>
                 {tipoDocumentos.map((mun, index) => (
@@ -267,6 +269,7 @@ export default function DebitoForm({ bankId }) {
                 placeholder="Descripción"
                 value={descripcion}
                 onChange={(e) => setDescripcion(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -281,6 +284,7 @@ export default function DebitoForm({ bankId }) {
                 placeholder="Fecha"
                 value={fecha}
                 onChange={(e) => setFecha(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -293,6 +297,7 @@ export default function DebitoForm({ bankId }) {
                 placeholder="No. Documento"
                 value={noDocumento}
                 onChange={(e) => setNoDocumento(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -307,6 +312,7 @@ export default function DebitoForm({ bankId }) {
                 placeholder="Monto"
                 value={monto}
                 onChange={(e) => setMonto(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -319,6 +325,7 @@ export default function DebitoForm({ bankId }) {
                 placeholder="Correlativo Contable"
                 value={documentoContable}
                 onChange={(e) => setDocumentoContable(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>

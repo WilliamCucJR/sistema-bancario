@@ -218,6 +218,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="No. Cuenta"
                 value={noCuenta}
                 onChange={(e) => setNoCuenta(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -229,6 +230,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 size="sm"
                 value={tipoCuenta}
                 onChange={(e) => setTipoCuenta(e.target.value)}
+                required
               >
                 <option>Seleccionar</option>
                 {tipoCuentas.map((mun, index) => (
@@ -250,6 +252,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="Nombre"
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -264,6 +267,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="DPI"
                 value={dpi}
                 onChange={(e) => setDpi(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -276,6 +280,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="NIT"
                 value={nit}
                 onChange={(e) => setNit(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -288,6 +293,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="Telefono"
                 value={telefono}
                 onChange={(e) => setTelefono(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -300,6 +306,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="Correo"
                 value={correo}
                 onChange={(e) => setCorreo(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -314,6 +321,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="Direccion"
                 value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -328,6 +336,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="Zona"
                 value={zona}
                 onChange={(e) => setZona(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
@@ -339,6 +348,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 size="sm"
                 value={departamento}
                 onChange={(e) => setDepartamento(e.target.value)}
+                required
               >
                 <option>Seleccionar</option>
                 {departamentos.map((dep, index) => (
@@ -357,6 +367,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 size="sm"
                 value={municipio}
                 onChange={(e) => setMunicipio(e.target.value)}
+                required
               >
                 <option>Seleccionar</option>
                 {municipios.map((mun, index) => (
@@ -377,6 +388,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 size="sm"
                 value={moneda}
                 onChange={(e) => setMoneda(e.target.value)}
+                required
               >
                 <option>Seleccionar</option>
                 {monedas.map((dep, index) => (
@@ -396,6 +408,7 @@ export default function CuentaBancariaForm({ bankId, selectedId }) {
                 placeholder="Saldo"
                 value={saldo}
                 onChange={(e) => setSaldo(e.target.value)}
+                required
               />
             </Form.Group>
           </Col>
