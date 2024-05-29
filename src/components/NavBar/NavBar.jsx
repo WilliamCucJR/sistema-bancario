@@ -10,6 +10,7 @@ import { IoHome } from "react-icons/io5";
 import { FaCogs } from "react-icons/fa";
 import { IoDocumentsOutline } from "react-icons/io5";
 import { FaSignOutAlt } from "react-icons/fa";
+import { IoDocumentsSharp } from "react-icons/io5";
 import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import logoSistema from "../../img/sistema-logo-horizontal.png";
 import "./NavBar.css";
@@ -41,9 +42,16 @@ export default function NavBar({ onLogout }) {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
             <Nav.Link as={Link} to="/home">
-            <IoHome /> Inicio
+              <IoHome /> Inicio
             </Nav.Link>
-            <NavDropdown  title={<><FaCogs /> Mantenimiento</>} id="basic-nav-dropdown">
+            <NavDropdown
+              title={
+                <>
+                  <FaCogs /> Mantenimiento
+                </>
+              }
+              id="basic-nav-dropdown"
+            >
               <NavDropdown.Item as={Link} to="/users">
                 <FaUsers /> Usuarios
               </NavDropdown.Item>
@@ -60,9 +68,14 @@ export default function NavBar({ onLogout }) {
                 <IoDocumentsOutline /> Tipos de Documentos
               </NavDropdown.Item>
             </NavDropdown>
+            <Nav.Link as={Link} to="/reports">
+              <IoDocumentsSharp /> Reportes
+            </Nav.Link>
           </Nav>
           <Nav>
-            <Nav.Link onClick={handleLogout}><FaSignOutAlt /> Cerrar Sesión</Nav.Link>
+            <Nav.Link onClick={handleLogout}>
+              <FaSignOutAlt /> Cerrar Sesión
+            </Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Navbar>

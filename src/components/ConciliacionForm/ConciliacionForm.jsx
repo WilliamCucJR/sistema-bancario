@@ -5,8 +5,10 @@ import Table from "react-bootstrap/Table";
 import Button from "react-bootstrap/Button";
 import * as XLSX from "xlsx";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
+import html2canvas from "html2canvas";
 import { FaRegFilePdf } from "react-icons/fa";
+import logo from "../../img/sistema-logo-horizontal-black.png";
+
 
 export default function ConciliacionForm({ bankId }) {
   console.log("bankId: ", bankId);
@@ -96,9 +98,39 @@ export default function ConciliacionForm({ bankId }) {
   };
 
   const exportToPDF = () => {
-    const doc = new jsPDF("landscape");
-    autoTable(doc, { html: tableRef.current });
-    doc.save("Conciliacion.pdf");
+    html2canvas(tableRef.current).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("landscape");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const padding = 10; // Ajusta este valor para cambiar el padding
+      const widthWithPadding = pdfWidth - padding * 2;
+      const heightWithPadding = pdfHeight - padding * 2;
+      const canvasAspectRatio = canvas.width / canvas.height;
+      const pdfAspectRatio = widthWithPadding / heightWithPadding;
+      let width, height;
+      if (canvasAspectRatio > pdfAspectRatio) {
+        width = widthWithPadding;
+        height = width / canvasAspectRatio;
+      } else {
+        height = heightWithPadding;
+        width = height * canvasAspectRatio;
+      }
+      pdf.addImage(imgData, "PNG", padding, padding, width, height);
+
+      // Obtén la fecha y hora actual y formátala como una cadena de solo números
+      const date = new Date();
+      const formattedDate = `${date.getFullYear()}${String(
+        date.getMonth() + 1
+      ).padStart(2, "0")}${String(date.getDate()).padStart(2, "0")}${String(
+        date.getHours()
+      ).padStart(2, "0")}${String(date.getMinutes()).padStart(2, "0")}${String(
+        date.getSeconds()
+      ).padStart(2, "0")}`;
+
+      // Concatena la fecha y hora formateada con el nombre del archivo PDF
+      pdf.save(`Conciliacion_${formattedDate}.pdf`);
+    });
   };
 
   console.log("Conciliacion: ", conciliacion);
@@ -185,7 +217,33 @@ export default function ConciliacionForm({ bankId }) {
         Exportar a PDF <FaRegFilePdf />
       </Button>
 
-      <Table hover ref={tableRef}>
+      <div ref={tableRef}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <img
+              src={logo}
+              alt="Logo del sistema"
+              style={{ height: "100px" }}
+            />
+            <p>{new Date().toLocaleDateString()}</p>
+          </div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              marginBottom: "10px",
+            }}
+          >
+            <h3>Conciliación</h3>
+          </div>
+      <Table hover>
         <thead>
           <tr>
             <th style={{ border: "1px solid grey" }}></th>
@@ -295,6 +353,7 @@ export default function ConciliacionForm({ bankId }) {
           ))}
         </tbody>
       </Table>
+      </div>
     </div>
   );
 }
