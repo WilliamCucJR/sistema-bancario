@@ -6,7 +6,6 @@ import Row from "react-bootstrap/Row";
 import Button from "react-bootstrap/Button";
 import Table from "react-bootstrap/Table";
 import { PiFilePdfBold } from "react-icons/pi";
-import autoTable from "jspdf-autotable";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import logo from "../../img/sistema-logo-horizontal-black.png";
@@ -54,12 +53,6 @@ export default function BankModalReports({ bankId }) {
 
   const tableRefMovimientos = useRef(null);
   const tableRefEstadoCuenta = useRef(null);
-
-  const exportToPDF = () => {
-    const doc = new jsPDF("landscape");
-    autoTable(doc, { html: tableRefMovimientos.current });
-    doc.save("MovimientosPorTipo.pdf");
-  };
 
   const estadoCuentaReport = async () => {
     setDataLoadedMovimientos(false);
@@ -256,53 +249,10 @@ export default function BankModalReports({ bankId }) {
             variant="danger"
             style={{ width: "18rem" }}
             className="d-flex flex-column align-items-center"
-            onClick={exportToPDF}
-          >
-            <PiFilePdfBold size={50} />
-            <span>Reporte de Creditos</span>
-          </Button>
-        </Col>
-        <Col className="d-flex justify-content-center align-items-center mb-3">
-          <Button
-            variant="danger"
-            style={{ width: "18rem" }}
-            className="d-flex flex-column align-items-center"
-          >
-            <PiFilePdfBold size={50} />
-            <span>Reporte de Debitos</span>
-          </Button>
-        </Col>
-      </Row>
-      <Row>
-        <Col className="d-flex justify-content-center align-items-center mb-3">
-          <Button
-            variant="danger"
-            style={{ width: "18rem" }}
-            className="d-flex flex-column align-items-center"
             onClick={movimientosPorTipo}
           >
             <PiFilePdfBold size={50} />
             <span>Movimientos por Descripción</span>
-          </Button>
-        </Col>
-        <Col className="d-flex justify-content-center align-items-center mb-3">
-          <Button
-            variant="danger"
-            style={{ width: "18rem" }}
-            className="d-flex flex-column align-items-center"
-          >
-            <PiFilePdfBold size={50} />
-            <span>Cuentas Creadas</span>
-          </Button>
-        </Col>
-        <Col className="d-flex justify-content-center align-items-center mb-3">
-          <Button
-            variant="danger"
-            style={{ width: "18rem" }}
-            className="d-flex flex-column align-items-center"
-          >
-            <PiFilePdfBold size={50} />
-            <span>Titulo del reporte</span>
           </Button>
         </Col>
       </Row>
