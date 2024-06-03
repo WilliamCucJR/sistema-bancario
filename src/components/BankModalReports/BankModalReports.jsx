@@ -414,38 +414,52 @@ export default function BankModalReports({ bankId }) {
               </tr>
             </thead>
             <tbody>
-              {estadoCuentas.map((estadoCuenta, index) => (
-                <tr key={index}>
-                  <td style={{ border: "1.5px solid black" }}>{index + 1}</td>
-                  <td style={{ border: "1.5px solid black" }}>
-                    {estadoCuenta.DESCRIPCION}
-                  </td>
-                  <td style={{ border: "1.5px solid black" }}>
-                    {estadoCuenta.NO_DOCUMENTO}
-                  </td>
-                  <td style={{ border: "1.5px solid black" }}>
-                    {estadoCuenta.FECHA}
-                  </td>
-                  <td style={{ border: "1.5px solid black" }}>
-                    {estadoCuenta.OPERACION > 0
-                      ? "Q" +
-                        parseFloat(estadoCuenta.MONTO).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
-                      : ""}
-                  </td>
-                  <td style={{ border: "1.5px solid black" }}>
-                    {estadoCuenta.OPERACION < 0
-                      ? "Q" +
-                        parseFloat(estadoCuenta.MONTO).toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })
-                      : ""}
-                  </td>
-                </tr>
-              ))}
+              {estadoCuentas.map((estadoCuenta, index) => {
+                const date = new Date(estadoCuenta.FECHA);
+                const day = String(date.getDate()).padStart(2, "0");
+                const month = String(date.getMonth() + 1).padStart(2, "0"); // Los meses en JavaScript comienzan desde 0
+                const year = date.getFullYear();
+                const formattedDate = `${day}-${month}-${year}`;
+
+                return (
+                  <tr key={index}>
+                    <td style={{ border: "1.5px solid black" }}>{index + 1}</td>
+                    <td style={{ border: "1.5px solid black" }}>
+                      {estadoCuenta.DESCRIPCION}
+                    </td>
+                    <td style={{ border: "1.5px solid black" }}>
+                      {estadoCuenta.NO_DOCUMENTO}
+                    </td>
+                    <td style={{ border: "1.5px solid black" }}>
+                      {formattedDate}
+                    </td>
+                    <td style={{ border: "1.5px solid black" }}>
+                      {estadoCuenta.OPERACION > 0
+                        ? "Q" +
+                          parseFloat(estadoCuenta.MONTO).toLocaleString(
+                            "en-US",
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )
+                        : ""}
+                    </td>
+                    <td style={{ border: "1.5px solid black" }}>
+                      {estadoCuenta.OPERACION < 0
+                        ? "Q" +
+                          parseFloat(estadoCuenta.MONTO).toLocaleString(
+                            "en-US",
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )
+                        : ""}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </Table>
         </div>
